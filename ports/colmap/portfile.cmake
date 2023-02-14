@@ -39,6 +39,11 @@ if("tests" IN_LIST FEATURES)
     set(TESTS_ENABLED ON)
 endif()
 
+set(OPENMP_ENABLED ON)
+if (VCPKG_TARGET_IS_OSX AND VCPKG_TARGET_ARCHITECTURE MATCHES "arm")
+    set(OPENMP_ENABLED Off)
+endif()
+
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     DISABLE_PARALLEL_CONFIGURE
@@ -48,6 +53,7 @@ vcpkg_cmake_configure(
         -DTESTS_ENABLED=${TESTS_ENABLED}
         -DGIT_COMMIT_ID=${GIT_COMMIT_ID}
         -DGIT_COMMIT_DATE=${COLMAP_GIT_COMMIT_DATE}
+        -DOPENMP_ENABLED=${OPENMP_ENABLED}
 )
 
 vcpkg_cmake_install()
@@ -81,3 +87,5 @@ file(REMOVE_RECURSE
 vcpkg_copy_pdbs()
 
 file(INSTALL "${SOURCE_PATH}/COPYING.txt" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}" RENAME copyright)
+
+file(INSTALL "${CMAKE_CURRENT_LIST_DIR}/usage" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}")
