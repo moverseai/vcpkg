@@ -1,4 +1,4 @@
-set(DIRECTXTEX_TAG mar2023)
+set(DIRECTXTEX_TAG oct2023)
 
 vcpkg_check_linkage(ONLY_STATIC_LIBRARY)
 
@@ -6,7 +6,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Microsoft/DirectXTex
     REF ${DIRECTXTEX_TAG}
-    SHA512 2e3a0b6830988d1ca137f462d4eedde53d07f30b5eb4bbc8fc588819a1a4e2a220dd4d23efaf08dae225e23286a21c3054560485a6578037c6b355a9450901cd
+    SHA512 4521d716bc903e9373c8d2929ff4fec04b3ae276a3005a06a744d5ee7044520faec6aa06e166b9c3bcc18f68c8e7553f23b21c227154eb3ef994a1c68b57da1a
     HEAD_REF main
     )
 
@@ -20,6 +20,12 @@ vcpkg_check_features(
         tools BUILD_TOOLS
 )
 
+set(EXTRA_OPTIONS -DBUILD_SAMPLE=OFF -DBUILD_TESTING=OFF)
+
+if(VCPKG_TARGET_IS_WINDOWS AND NOT (VCPKG_TARGET_IS_XBOX OR VCPKG_TARGET_IS_MINGW) AND NOT "dx12" IN_LIST FEATURES)
+  list(APPEND EXTRA_OPTIONS "-DCMAKE_DISABLE_FIND_PACKAGE_directx-headers=TRUE")
+endif()
+
 if(VCPKG_TARGET_IS_MINGW AND ("dx11" IN_LIST FEATURES))
     message(NOTICE "Building ${PORT} for MinGW requires the HLSL Compiler fxc.exe also be in the PATH. See https://aka.ms/windowssdk.")
 endif()
@@ -30,7 +36,7 @@ endif()
 
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
-    OPTIONS ${FEATURE_OPTIONS} -DBUILD_SAMPLE=OFF -DBUILD_TESTING=OFF -DBC_USE_OPENMP=ON
+    OPTIONS ${FEATURE_OPTIONS} ${EXTRA_OPTIONS}
 )
 
 vcpkg_cmake_install()
@@ -46,21 +52,21 @@ if("tools" IN_LIST FEATURES)
       TEXASSEMBLE_EXE
       URLS "https://github.com/Microsoft/DirectXTex/releases/download/${DIRECTXTEX_TAG}/texassemble.exe"
       FILENAME "texassemble-${DIRECTXTEX_TAG}.exe"
-      SHA512 0d22ca97567333142ebb612b16093270907853a6eb4ee583d497d62a2e11de0930144760c1674c3acd775fdaca2cf611dfa7878bf4634bd5913d9196c7dd4155
+      SHA512 e53548f8715f9ecfe7bd9904eec5fd2fe77d09e8fae78fa95a056a882d8856fe9311d01a703da47ef530e3878fdee8bc4a288617a81ffb61043d6b48acef5df0
     )
 
     vcpkg_download_distfile(
       TEXCONV_EXE
       URLS "https://github.com/Microsoft/DirectXTex/releases/download/${DIRECTXTEX_TAG}/texconv.exe"
       FILENAME "texconv-${DIRECTXTEX_TAG}.exe"
-      SHA512 b2dff6c3f4195c9cb25436b8fe9be467d5a6a07567f42d736532de90aad04b947e6a14d72c5fd2e9db3eaf33fcabb23dc13b1c604191b5fd51d544040e0107a9
+      SHA512 ca1772650f7368917ea719d853eade2040ed189c45acb8cbaa1dec57e61ca429e041b411271a53e9ca9a11f7a5fc84df1e25c0d019886647b8208bdde93ff258
     )
 
     vcpkg_download_distfile(
       TEXDIAG_EXE
       URLS "https://github.com/Microsoft/DirectXTex/releases/download/${DIRECTXTEX_TAG}/texdiag.exe"
       FILENAME "texdiag-${DIRECTXTEX_TAG}.exe"
-      SHA512 b2617e12de22cb3369d29a2b1dc6f26275d2c325f4d0b388f05e7901c1d8d92fe029d73d24113c30a60729526f664f7d90234a4b0014185a9eadf88e09bc22fa
+      SHA512 baea51318adec86e7d0808c99c5ed8d529d9196073ce31c7df79fc12c7ff085169ab72d8876a47bc462d4eb6ec02e103af3f8b1ee0fdd762c2662c0453388e74
     )
 
     file(INSTALL
@@ -79,21 +85,21 @@ if("tools" IN_LIST FEATURES)
       TEXASSEMBLE_EXE
       URLS "https://github.com/Microsoft/DirectXTex/releases/download/${DIRECTXTEX_TAG}/texassemble_arm64.exe"
       FILENAME "texassemble-${DIRECTXTEX_TAG}-arm64.exe"
-      SHA512 b5a8b53e2f481286ca8f1fdac5f03c0ccc07f282b0cdc83350e967a9e707adb6d3acd03c5edfb635f707a3044732ca942b490ed704bb869f5e7c21781cce7453
+      SHA512 d11152bf4193ab83ab8cabae58ef517b05babec049f2fb1317a51b708d14ba4a93806ff4ebeb1004391c0692fc76b9bedd7a43dbea3d74a4d7548fb69c809f8b
     )
 
     vcpkg_download_distfile(
       TEXCONV_EXE
       URLS "https://github.com/Microsoft/DirectXTex/releases/download/${DIRECTXTEX_TAG}/texconv_arm64.exe"
       FILENAME "texconv-${DIRECTXTEX_TAG}-arm64.exe"
-      SHA512 3217719114eae1dabca27ab921574cee562e5e74e076a6fbf14d63ebd3e64d5d76948c926b2c2f15d6d4a6f26e5a0e57bbd3ad4075be0e7616b90d99db87d6e4
+      SHA512 09f3bc8aebac8804644f6673d0f21d4ee21155f13383c5a0da8afcaef6df6a1186c9254679334247b638ec11b9f1080abed285e174716a1e7662fc46c103278d
     )
 
     vcpkg_download_distfile(
       TEXDIAG_EXE
       URLS "https://github.com/Microsoft/DirectXTex/releases/download/${DIRECTXTEX_TAG}/texdiag_arm64.exe"
       FILENAME "texdiag-${DIRECTXTEX_TAG}-arm64.exe"
-      SHA512 5425a8fa6aa7e806a14f5d10bcc78cb6c687b675bad98e4308aeec9daaf2babc5b57f33a8c83ea8db286716d52ae26219ab830552f5c26bcdfe75e4196cd274d
+      SHA512 d1ec122e9647d243349678b8d1d267d9b26a84a6a845728c0408f94a486fe6c43488b2f507a96035063fc245bcb670367c0f219626c627ddc31d1713a782a1fd
     )
 
     file(INSTALL
@@ -118,4 +124,5 @@ endif()
 
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 
-file(INSTALL "${SOURCE_PATH}/LICENSE" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}" RENAME copyright)
+file(INSTALL "${CMAKE_CURRENT_LIST_DIR}/usage" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}")
+vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")

@@ -1,4 +1,4 @@
-set(UVATLAS_TAG mar2023)
+set(UVATLAS_TAG oct2023)
 
 vcpkg_check_linkage(ONLY_STATIC_LIBRARY)
 
@@ -6,7 +6,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Microsoft/UVAtlas
     REF ${UVATLAS_TAG}
-    SHA512 f937c5881e963400c82bf5d780399e7733850a134f37aa40e819155fcef956631db19d4e14faa4db1381baad254015228afbb96523cce84c60087e877a6d5f59
+    SHA512 2ad831663a0db907c21cc13af766704ff9b037a55032bed0e99e71aae496df367e00a7ee146b4f2223fa1390c4ad3f050a79dd6ffdbc0f16982dbb3592da8912
     HEAD_REF main
     PATCHES openexr.patch
 )
@@ -41,7 +41,7 @@ if("tools" IN_LIST FEATURES)
       UVATLASTOOL_EXE
       URLS "https://github.com/Microsoft/UVAtlas/releases/download/${UVATLAS_TAG}/uvatlastool.exe"
       FILENAME "uvatlastool-${UVATLAS_TAG}.exe"
-      SHA512 8c0986581415449b4d9cb5c056e6f4ad8313bb1481e97479eddbdea200061275c7c77823cdb2719cdc06e3b46bab5e907c1483752d42304978e015b26058ebf6
+      SHA512 66b773c97dc591785c7472557da7f9df0f682dd8b20a4751aa4e3ad97c3a0edc6080ce563ac49d21e3781a12ca0c748e1aa032b20839bcf06f6d21133e5cc8e1
     )
 
     file(INSTALL
@@ -62,4 +62,5 @@ endif()
 
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 
-file(INSTALL "${SOURCE_PATH}/LICENSE" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}" RENAME copyright)
+file(INSTALL "${CMAKE_CURRENT_LIST_DIR}/usage" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}")
+vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")
