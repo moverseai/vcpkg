@@ -9,6 +9,7 @@
     "eigen3",
     "lapack",
     "suitesparse",
+    "openblas",
     {
       "name": "vcpkg-cmake",
       "host": true

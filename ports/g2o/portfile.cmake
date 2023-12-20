@@ -1,8 +1,8 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO RainerKuemmerle/g2o
-    REF fcba4eaca6f20d9a5792404cc8ef303aeb8ba5d2
-    SHA512 41e5a6d40db10d66182653d56f937f29264bf4f9412dfa651be949caeb055741c9d9ba75a122180892aafe7d45b334d50470284121148c0561e1d49f6ba5e20a
+    REPO moverseai/g2o
+    REF 02a8f5be538dd3c51f8f9d5261bc4e5391559b00
+    SHA512 fbf656a128814fa9bb3e510fab58a38deaf90298520b73528be1b3f6bbf7cfedf7ba4526df48ad88e4f866a9b3932cdd6bc97574ec73f0cd67c50d01eff56649
     HEAD_REF master
 )
 
@@ -38,5 +38,13 @@ if(EXE OR DEBUG_EXE)
 endif()
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
+#file(INSTALL "${SOURCE_PATH}/doc/license-bsd.txt" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}" RENAME copyright) 
 
-file(INSTALL "${SOURCE_PATH}/doc/license-bsd.txt" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}" RENAME copyright)
+# Handling absolute paths in config.h
+file(READ "${CURRENT_PACKAGES_DIR}/include/${PORT}/config.h" _contents)
+string(REGEX REPLACE "#define G2O_CXX_COMPILER \"[^\"]+\"" "#define G2O_CXX_COMPILER \"\${CMAKE_CXX_COMPILER_ID} \${CMAKE_CXX_COMPILER}\"" _contents "${_contents}")
+string(REGEX REPLACE "#define G2O_SRC_DIR \"[^\"]+\"" "#define G2O_SRC_DIR \"\${PROJECT_SOURCE_DIR}\"" _contents "${_contents}")
+file(WRITE "${CURRENT_PACKAGES_DIR}/include/${PORT}/config.h" "${_contents}")
+
+vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/doc/license-bsd.txt")
+
