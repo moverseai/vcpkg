@@ -1,8 +1,8 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO free-audio/clap
-    REF 1.1.10
-    SHA512 50d2b8e35ebcb3dfd4e057ddcf22e92204ca90a700527fe802c7f3ae678e77c970f789f2fbbedd58964a1d1ec72376e7c8d488c10fe03d39fbd1cd5d6a8630a1
+    REF "${VERSION}"
+    SHA512 4a532acf85b89f7da733bff88bdef58a273dc19c14b4bb9bf747717d8c2450351e506fefab388cd8a644d01237b1d39ef5adb355957b30d7851aeb6a2f648492
     HEAD_REF main
 )
 

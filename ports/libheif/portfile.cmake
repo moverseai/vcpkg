@@ -1,11 +1,24 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO  strukturag/libheif 
+    REPO  strukturag/libheif
     REF "v${VERSION}"
-    SHA512 e17f990fcb4b3ebfec19cbf304ae8f9b00a3d33aaf46802eff8b3c21c614ccd02cb0a92960324b4c579e579021615c88d16efe6df84a171ddbc05313d2c73931
+    SHA512 ff6aedef3e848efed8dd274cb8bfd84fc9d08591ce1d4cba7a88f11625dc875eb5f53d7d14bab01693859f1518ae54f958b66ea7d86f3a1791eb07c05a3b0358
     HEAD_REF master
     PATCHES
         gdk-pixbuf.patch
+        fix-gcc8.patch
+)
+
+vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+    FEATURES
+        hevc        WITH_X265
+        aom         WITH_AOM_DECODER
+        aom         WITH_AOM_ENCODER
+        openjpeg    WITH_OpenJPEG_DECODER
+        openjpeg    WITH_OpenJPEG_ENCODER
+        jpeg        WITH_JPEG_DECODER
+        jpeg        WITH_JPEG_ENCODER
+        iso23001-17 WITH_UNCOMPRESSED_CODEC
 )
 
 vcpkg_cmake_configure(
@@ -13,23 +26,25 @@ vcpkg_cmake_configure(
     OPTIONS
         -DWITH_EXAMPLES=OFF
         -DWITH_DAV1D=OFF
-        -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON
+        -DBUILD_TESTING=OFF
+        -DCMAKE_COMPILE_WARNING_AS_ERROR=OFF
+        ${FEATURE_OPTIONS}
 )
 vcpkg_cmake_install()
 vcpkg_copy_pdbs()
 
 vcpkg_cmake_config_fixup(CONFIG_PATH lib/cmake/libheif/)
 # libheif's pc file assumes libstdc++, which isn't always true.
-vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/lib/pkgconfig/libheif.pc" " -lstdc++" "")
+vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/lib/pkgconfig/libheif.pc" " -lstdc++" "" IGNORE_UNCHANGED)
 if(NOT VCPKG_BUILD_TYPE)
-    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig/libheif.pc" " -lstdc++" "")
+    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig/libheif.pc" " -lstdc++" "" IGNORE_UNCHANGED)
 endif()
 vcpkg_fixup_pkgconfig()
 
 if (VCPKG_LIBRARY_LINKAGE STREQUAL "dynamic")
-    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/include/libheif/heif.h" "defined(_MSC_VER) && !defined(LIBHEIF_STATIC_BUILD)" "defined(_WIN32)")
+    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/include/libheif/heif.h" "!defined(LIBHEIF_STATIC_BUILD)" "1")
 else()
-    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/include/libheif/heif.h" "defined(_MSC_VER) && !defined(LIBHEIF_STATIC_BUILD)" "0")
+    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/include/libheif/heif.h" "!defined(LIBHEIF_STATIC_BUILD)" "0")
 endif()
 vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/include/libheif/heif.h" "#ifdef LIBHEIF_EXPORTS" "#if 0")
 

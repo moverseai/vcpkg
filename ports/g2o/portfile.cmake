@@ -1,19 +1,31 @@
+string(REPLACE "-" "" GIT_TAG "${VERSION}_git")
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO moverseai/g2o
     REF 02a8f5be538dd3c51f8f9d5261bc4e5391559b00
     SHA512 fbf656a128814fa9bb3e510fab58a38deaf90298520b73528be1b3f6bbf7cfedf7ba4526df48ad88e4f866a9b3932cdd6bc97574ec73f0cd67c50d01eff56649
     HEAD_REF master
+    PATCHES
+        fix-absolute.patch
+        0003-dependency-spdlog.diff
 )
 
 string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "dynamic" BUILD_LGPL_SHARED_LIBS)
+file(REMOVE "${SOURCE_PATH}/cmake_modules/FindBLAS.cmake")
+
+vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+    FEATURES
+        spdlog      G2O_USE_LOGGING
+)
 
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
+        ${FEATURE_OPTIONS}
         -DBUILD_LGPL_SHARED_LIBS=${BUILD_LGPL_SHARED_LIBS}
         -DG2O_BUILD_EXAMPLES=OFF
         -DG2O_BUILD_APPS=OFF
+        -DBUILD_CSPARSE=OFF
 )
 
 vcpkg_cmake_install()

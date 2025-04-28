@@ -1,8 +1,12 @@
+if(VCPKG_TARGET_IS_LINUX)
+    message(WARNING "Building ${PORT} requires a C++20 compliant compiler. GCC 12 and Clang 15 are known to work.")
+endif()
+
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO ada-url/ada
     REF "v${VERSION}"
-    SHA512 1814365f98cc85e97fe135a840241c66ddd8a9d6d10f0be548f72bc22b840673ea30291633e4d90e2023b99b59533fa7c77eab65ed41bf9c2bf79fd261cfeba0
+    SHA512 dd9f74ce795a105a3fa989015fe915c246716b052b5e8f3f28eb83652da96610b4c1e7297c5757b8f5e3fa6f1737f44ae184795cd45106a84ca9bcfb558e825d
     HEAD_REF main
     PATCHES
         no-cpm.patch
@@ -18,7 +22,7 @@ vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
         -DADA_BENCHMARKS=OFF
-        -DBUILD_TESTING=OFF
+        -DADA_TESTING=OFF
         -DCMAKE_DISABLE_FIND_PACKAGE_Python3=ON
         ${FEATURE_OPTIONS}
     OPTIONS_DEBUG

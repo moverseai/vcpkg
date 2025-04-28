@@ -1,9 +1,8 @@
-
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO libexif/libexif
     REF "v${VERSION}"
-    SHA512 eac1b5220ca0e02370837a0d78a6d38e91c5afa0956d4196b26a8d2a8a2c5dea18d58c0e473285f278653c3863923241651b7dff4d007cc46385eb29ea188330
+    SHA512 6e50134eab2fcf93036ecf8a9a9f89273ab8ddc4a171523f1f88f6d90bda799ef8f6a597c1c308fe8153dcc685a2d2b473e758e2286ce4d3143dd829e07a8c80
     HEAD_REF master
     PATCHES
         fix-ssize.patch
@@ -13,7 +12,6 @@ vcpkg_list(SET options)
 if("nls" IN_LIST FEATURES)
     vcpkg_list(APPEND options "--enable-nls")
 else()
-    set(ENV{AUTOPOINT} true) # true, the program
     vcpkg_list(APPEND options "--disable-nls")
 endif()
 

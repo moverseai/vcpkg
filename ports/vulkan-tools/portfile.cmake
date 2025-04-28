@@ -2,11 +2,13 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO KhronosGroup/Vulkan-Tools
     REF "vulkan-sdk-${VERSION}"
-    SHA512 9359e9528bfe507870bd83f9e8860b3d82555c0d8a6a19284f150dd2288b204f2c9dc9b3f62be4efbbb5e2983862459b2131de126a603cc5531ef8df72f4458f
+    SHA512 c6cee270573e0fd255fc012eeadf0433acb0640e86286c3c4ff0eac946b08abd3b65d503b3c87a797ad11ace6e3545939a18dfa117ab1cf4a488087eb12f808b
     HEAD_REF main
 )
 
-set(VCPKG_BUILD_TYPE release) # only builds tools
+if(NOT VCPKG_TARGET_IS_ANDROID)
+    set(VCPKG_BUILD_TYPE release) # only builds tools
+endif()
 
 vcpkg_cmake_configure(
   SOURCE_PATH "${SOURCE_PATH}"
@@ -17,8 +19,14 @@ vcpkg_cmake_install()
 
 vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE.txt")
 
-vcpkg_copy_tools(TOOL_NAMES vkcube vkcubepp vulkaninfo AUTO_CLEAN )
+set(tools vulkaninfo)
+if(NOT VCPKG_TARGET_IS_ANDROID)
+    list(APPEND tools vkcube vkcubepp)
+endif()
+vcpkg_copy_tools(TOOL_NAMES ${tools} AUTO_CLEAN)
 
 set(VCPKG_POLICY_EMPTY_INCLUDE_FOLDER enabled)
 
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug")
+if(NOT VCPKG_TARGET_IS_ANDROID)
+    file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug")
+endif()

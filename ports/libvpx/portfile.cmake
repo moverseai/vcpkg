@@ -13,22 +13,22 @@ vcpkg_from_github(
         0005-fix-arm64-build.patch # Upstream commit: https://github.com/webmproject/libvpx/commit/858a8c611f4c965078485860a6820e2135e6611b
 )
 
-vcpkg_find_acquire_program(PERL)
-
-get_filename_component(PERL_EXE_PATH ${PERL} DIRECTORY)
-
 if(CMAKE_HOST_WIN32)
-    vcpkg_acquire_msys(MSYS_ROOT PACKAGES make)
-    set(BASH ${MSYS_ROOT}/usr/bin/bash.exe)
-    set(ENV{PATH} "${MSYS_ROOT}/usr/bin;$ENV{PATH};${PERL_EXE_PATH}")
+    vcpkg_acquire_msys(MSYS_ROOT PACKAGES make perl)
+    set(ENV{PATH} "${MSYS_ROOT}/usr/bin;$ENV{PATH}")
 else()
-    set(BASH /bin/bash)
+    vcpkg_find_acquire_program(PERL)
+    get_filename_component(PERL_EXE_PATH ${PERL} DIRECTORY)
     set(ENV{PATH} "${MSYS_ROOT}/usr/bin:$ENV{PATH}:${PERL_EXE_PATH}")
 endif()
 
-vcpkg_find_acquire_program(NASM)
-get_filename_component(NASM_EXE_PATH ${NASM} DIRECTORY)
-vcpkg_add_to_path(${NASM_EXE_PATH})
+find_program(BASH NAME bash HINTS ${MSYS_ROOT}/usr/bin REQUIRED NO_CACHE)
+
+if (VCPKG_TARGET_ARCHITECTURE STREQUAL "x86" OR VCPKG_TARGET_ARCHITECTURE STREQUAL "x64")
+    vcpkg_find_acquire_program(NASM)
+    get_filename_component(NASM_EXE_PATH ${NASM} DIRECTORY)
+    vcpkg_add_to_path(${NASM_EXE_PATH})
+endif()
 
 if(VCPKG_TARGET_IS_WINDOWS AND NOT VCPKG_TARGET_IS_MINGW)
 

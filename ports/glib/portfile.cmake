@@ -1,8 +1,9 @@
+# vcpkg_from_* is not used because the project uses submodules.
 string(REGEX MATCH "^([0-9]*[.][0-9]*)" GLIB_MAJOR_MINOR "${VERSION}")
 vcpkg_download_distfile(GLIB_ARCHIVE
     URLS "https://download.gnome.org/sources/glib/${GLIB_MAJOR_MINOR}/glib-${VERSION}.tar.xz"
     FILENAME "glib-${VERSION}.tar.xz"
-    SHA512 aa9ed9195951b00ac8221e958ea337fbda82621a862ef8f29dc2ea396a6253ce51c2a0a498dfa4e12642f1836f85f9564f09991979ae85c5ed4368355d857376
+    SHA512 39e1ade8ba5a43e6dbd4c60b48327a87d50755be96eddfffce824bd5d417f6d3a9b80e6b307b47c3a74d52e726954f7c38e3245f87f32ef4dccb3f0a51eabc1e
 )
 
 vcpkg_extract_source_archive(SOURCE_PATH
@@ -12,8 +13,9 @@ vcpkg_extract_source_archive(SOURCE_PATH
         libintl.patch
 )
 
-if(APPLE)
-    list(APPEND VCPKG_CMAKE_CONFIGURE_OPTIONS "-DVCPKG_ENABLE_OBJC=1")
+set(LANGUAGES C CXX)
+if(VCPKG_TARGET_IS_OSX OR VCPKG_TARGET_IS_IOS)
+    list(APPEND LANGUAGES OBJC OBJCXX)
 endif()
 
 vcpkg_list(SET OPTIONS)
@@ -41,15 +43,16 @@ endif()
 
 vcpkg_configure_meson(
     SOURCE_PATH "${SOURCE_PATH}"
-    LANGUAGES C CXX OBJC OBJCXX
+    LANGUAGES ${LANGUAGES}
     ADDITIONAL_BINARIES
         ${ADDITIONAL_BINARIES}
     OPTIONS
         ${OPTIONS}
-        -Dgtk_doc=false
+        -Ddocumentation=false
         -Dinstalled_tests=false
+        -Dintrospection=disabled
         -Dlibelf=disabled
-        -Dman=false
+        -Dman-pages=disabled
         -Dtests=false
         -Dxattr=false
 )
@@ -72,6 +75,9 @@ endforeach()
 set(GLIB_TOOLS
     gapplication
     gdbus
+    gi-compile-repository
+    gi-decompile-typelib
+    gi-inspect-typelib
     gio
     gio-querymodules
     glib-compile-resources
@@ -109,11 +115,11 @@ endif()
 set(pc_replace_intl_path gio glib gmodule-no-export gobject gthread)
 foreach(pc_prefix IN LISTS pc_replace_intl_path)
     vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/lib/pkgconfig/${pc_prefix}-2.0.pc" "\"" "")
-    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/lib/pkgconfig/${pc_prefix}-2.0.pc" "\${prefix}/debug/lib/${LIBINTL_NAME}" "-lintl")
-    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/lib/pkgconfig/${pc_prefix}-2.0.pc" "\${prefix}/lib/${LIBINTL_NAME}" "-lintl")
+    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/lib/pkgconfig/${pc_prefix}-2.0.pc" "\${prefix}/debug/lib/${LIBINTL_NAME}" "-lintl" IGNORE_UNCHANGED)
+    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/lib/pkgconfig/${pc_prefix}-2.0.pc" "\${prefix}/lib/${LIBINTL_NAME}" "-lintl" IGNORE_UNCHANGED)
     if(NOT VCPKG_BUILD_TYPE)
         vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig/${pc_prefix}-2.0.pc" "\"" "")
-        vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig/${pc_prefix}-2.0.pc" "\${prefix}/lib/${LIBINTL_NAME}" "-lintl")
+        vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig/${pc_prefix}-2.0.pc" "\${prefix}/lib/${LIBINTL_NAME}" "-lintl" IGNORE_UNCHANGED)
     endif()
 endforeach()
 

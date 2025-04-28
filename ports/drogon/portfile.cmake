@@ -2,7 +2,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO an-tao/drogon
     REF "v${VERSION}"
-    SHA512 05666166e0b03a6f349a3811ea1014f6e7d8a42a5e749e478502461722a647c6170f5538a4cba9820c3135551d577276094cd96eb0997946c3a37787b531ac49
+    SHA512 8e050a2545067492ab037acda6cbc628806617ef2494397d6940241556afaa2555b5cb5e2baa6790c5a20172bd5d61e0454f2a52f85b3d875b23774aac8bb36a
     HEAD_REF master
     PATCHES
          0001-vcpkg.patch
@@ -27,6 +27,7 @@ vcpkg_check_features(
         postgres LIBPQ_BATCH_MODE
         redis    BUILD_REDIS
         sqlite3  BUILD_SQLITE
+        yaml     BUILD_YAML_CONFIG
 )
 
 string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "dynamic" BUILD_DROGON_SHARED)
@@ -40,7 +41,7 @@ vcpkg_cmake_configure(
         -DCMAKE_DISABLE_FIND_PACKAGE_Boost=ON
         -DUSE_SUBMODULE=OFF
         "-DDROGON_CTL_TOOL=${DROGON_CTL_TOOL}"
-        ${FEATURE_OPTIONS}        
+        ${FEATURE_OPTIONS}
     MAYBE_UNUSED_VARIABLES
         CMAKE_DISABLE_FIND_PACKAGE_Boost
 )
