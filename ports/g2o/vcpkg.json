@@ -8,8 +8,8 @@
     "ceres",
     "eigen3",
     "lapack",
-    "suitesparse",
-    "openblas",
+    "suitesparse-cholmod",
+    "suitesparse-cxsparse",
     {
       "name": "vcpkg-cmake",
       "host": true
