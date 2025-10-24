@@ -1,0 +1,22 @@
+{
+  "name": "g2o-avx-2",
+  "version-date": "2020-04-08",
+  "port-version": 7,
+  "description": "g2o: A General Framework for Graph Optimization",
+  "homepage": "https://openslam.org/g2o.html",
+  "dependencies": [
+    "ceres",
+    "eigen3",
+    "lapack",
+    "suitesparse",
+    "openblas",
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
